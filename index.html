@@ -4,18 +4,17 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover" />
   <title>Sistema de Tareos</title>
-  <!-- Tipografía Inter limpia y adaptable para pantallas móviles -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <!-- SheetJS para importar y exportar archivos Excel (.xlsx / .xls / .csv) -->
+  <!-- SheetJS para lectura y exportación nativa de Excel (.xlsx / .xls) -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <style>
     :root {
       --bg: #080d0a;
       --bg-grad: radial-gradient(circle at 15% 10%, rgba(16, 185, 129, 0.14), transparent 42%),
                  radial-gradient(circle at 85% 90%, rgba(5, 150, 105, 0.12), transparent 45%);
-      --card: rgba(16, 25, 20, 0.78);
+      --card: rgba(16, 25, 20, 0.82);
       --card-solid: #111b15;
       --text: #ecf5ef;
       --muted: #8ea396;
@@ -26,13 +25,13 @@
       --warn: #f59e0b;
       --danger: #ef4444;
       --info: #38bdf8;
-      --input: rgba(9, 15, 12, 0.85);
+      --input: rgba(9, 15, 12, 0.88);
       --shadow: 0 8px 28px rgba(0, 0, 0, 0.38);
     }
 
     body.has-bg {
-      --card: rgba(12, 19, 15, 0.84);
-      --input: rgba(8, 13, 10, 0.88);
+      --card: rgba(12, 19, 15, 0.86);
+      --input: rgba(8, 13, 10, 0.90);
     }
 
     *, *::before, *::after {
@@ -74,10 +73,10 @@
     }
 
     body.has-bg #bg-veil {
-      background: linear-gradient(180deg, rgba(6, 11, 8, 0.72), rgba(6, 11, 8, 0.86));
+      background: linear-gradient(180deg, rgba(6, 11, 8, 0.72), rgba(6, 11, 8, 0.88));
     }
 
-    /* Barra superior compacta estilo Liquid Glass */
+    /* Barra superior sticky adaptada a móvil */
     .topbar {
       width: 100%;
       display: flex;
@@ -87,7 +86,7 @@
       padding: calc(6px + env(safe-area-inset-top)) 10px 6px;
       font-size: 11px;
       color: var(--muted);
-      background: rgba(12, 20, 16, 0.82);
+      background: rgba(12, 20, 16, 0.86);
       border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
@@ -146,7 +145,6 @@
       padding: 3px 8px;
       border-radius: 99px;
       cursor: pointer;
-      transition: all 0.15s ease;
     }
 
     .mode-pill button.on-script {
@@ -230,7 +228,6 @@
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 6px 8px;
-      transition: border-color 0.15s ease;
     }
 
     input[type="date"] {
@@ -266,7 +263,6 @@
       gap: 4px;
       white-space: nowrap;
       user-select: none;
-      transition: transform 0.08s ease, background 0.15s ease;
     }
 
     button.btn:active, label.btn:active { transform: scale(0.98); }
@@ -307,6 +303,16 @@
       border-color: var(--primary);
     }
 
+    /* Contenedores DOM estrictamente independientes por pestaña */
+    .tab-pane {
+      display: none !important;
+      width: 100%;
+    }
+
+    .tab-pane.active-pane {
+      display: block !important;
+    }
+
     .badge {
       display: inline-block;
       padding: 2px 6px;
@@ -320,7 +326,6 @@
     .b-bor { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
     .b-env { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
 
-    /* Banner Masivo destacado */
     .masivo-banner {
       background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(56, 189, 248, 0.12));
       border: 1px solid var(--border-strong);
@@ -329,7 +334,7 @@
       margin-bottom: 8px;
     }
 
-    /* Tarjetas compactas de tareo en móvil con letra pequeña */
+    /* Tarjetas compactas de tareo en móvil con letra pequeña legible */
     .t-item {
       background: var(--card);
       border: 1px solid var(--border);
@@ -438,7 +443,6 @@
       font-weight: 800;
     }
 
-    /* Tarjetas compactas de Asistencia / Distribución Cosecha */
     .dist-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -497,11 +501,6 @@
       margin-bottom: 8px;
     }
 
-    .excel-drop:active {
-      background: rgba(16, 185, 129, 0.18);
-    }
-
-    /* Tabla interactiva del Maestro de Labores y Códigos con reordenamiento */
     .labor-table {
       width: 100%;
       border-collapse: collapse;
@@ -574,7 +573,7 @@
     table.res-tbl {
       width: 100%;
       border-collapse: collapse;
-      min-width: 500px;
+      min-width: 480px;
     }
 
     table.res-tbl th, table.res-tbl td {
@@ -607,7 +606,6 @@
 
     .kpi b { display: block; font-size: 15px; margin-top: 2px; color: var(--primary); }
 
-    /* Login privado exclusivamente por PIN */
     .login-wrap {
       width: 100%;
       max-width: 330px;
@@ -703,7 +701,6 @@
   <datalist id="dl-dni"></datalist>
   <div id="toast"></div>
 
-  <!-- Modal de Confirmación -->
   <div id="modal">
     <div class="box">
       <div id="m-title" style="font-weight:800;font-size:14px;margin-bottom:6px">Confirmar</div>
@@ -717,7 +714,7 @@
 
   <script>
     // =========================================================================
-    // CONFIGURACIÓN PRINCIPAL, RETENCIÓN DE 30 DÍAS Y LABORES OFICIALES
+    // CONFIGURACIÓN GLOBAL, RETENCIÓN DE 30 DÍAS Y LABORES OFICIALES
     // =========================================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbyilM2sXACMZfpctKQdxWrikrwD--hCUuEj55PImcL9ArnCKu1ffm1c1BsAHQOEVWBYNg/exec";
     const MASTER_PIN = "0104";
@@ -749,13 +746,13 @@
     ];
 
     const CACHE = {
-      PERSONAL: "tareos_v10_personal",
-      LABORES: "tareos_v10_labores",
-      USERS: "tareos_v10_users",
-      BG: "tareos_v10_bg",
-      TAREO_PREFIX: "tareos_v10_tareo_",
-      ASIS_PREFIX: "tareos_v10_asis_",
-      RESUMEN_PREFIX: "tareos_v10_resumen_"
+      PERSONAL: "tareos_v12_personal",
+      LABORES: "tareos_v12_labores",
+      USERS: "tareos_v12_users",
+      BG: "tareos_v12_bg",
+      TAREO_PREFIX: "tareos_v12_tareo_",
+      ASIS_PREFIX: "tareos_v12_asis_",
+      RESUMEN_PREFIX: "tareos_v12_resumen_"
     };
 
     const $ = id => document.getElementById(id);
@@ -807,7 +804,7 @@
           const keysToDelete = [];
           for (let i = 0; i < localStorage.length; i++) {
             const k = localStorage.key(i);
-            if (!k || !k.startsWith("tareos_v10_")) continue;
+            if (!k || !k.startsWith("tareos_v12_")) continue;
             const m = k.match(/(\d{4}-\d{2}-\d{2})/);
             if (m && m[1] < cutoff) {
               keysToDelete.push(k);
@@ -819,7 +816,7 @@
     };
 
     // =========================================================================
-    // DATOS DEMO PRECARGADOS PARA PRUEBAS SIN AFECTAR DRIVE
+    // DATOS DEMO AISLADOS
     // =========================================================================
     const DEMO = {
       users: [
@@ -867,7 +864,7 @@
     };
 
     // =========================================================================
-    // ESTADO DE LA APLICACIÓN
+    // ESTADO CENTRAL CON PESTAÑA ACTIVA ESTRICTA (activeTab + renderToken)
     // =========================================================================
     const S = {
       demo: false,
@@ -875,7 +872,8 @@
       rol: "",
       nombre: "",
       fundo: "",
-      tab: "tareo",
+      activeTab: "tareo",
+      renderToken: 0,
       resumenSubTab: "tareos",
       fecha: TODAY,
       filas: [],
@@ -895,9 +893,6 @@
       bgImage: ""
     };
 
-    // =========================================================================
-    // UTILIDADES DE INTERFAZ Y MODALES
-    // =========================================================================
     let toastTimer = null;
     function toast(t, ms = 2500) {
       const el = $("toast");
@@ -970,6 +965,8 @@
       S.rol = "";
       S.nombre = "";
       S.fundo = "";
+      S.activeTab = "tareo";
+      S.renderToken++;
       S.filas = [{ dni: "", labor: "", horas: 8 }];
       S.estado = "NUEVO";
       S.editandoEnviado = false;
@@ -983,9 +980,6 @@
       S.asisBorradoresList = [];
     }
 
-    // =========================================================================
-    // SWITCHER SUPERIOR: SCRIPT (DRIVE) VS DEMO
-    // =========================================================================
     function renderTopbarMode() {
       $("m-script").className = !S.demo ? "on-script" : "";
       $("m-demo").className = S.demo ? "on-demo" : "";
@@ -1016,7 +1010,7 @@
     }
 
     // =========================================================================
-    // COMUNICACIÓN CON GOOGLE APPS SCRIPT + RESPUESTA LOCAL RESILIENTE
+    // API APPS SCRIPT + RESPALDO LOCAL AISLADO
     // =========================================================================
     function localFallbackApi(req) {
       store.purgeOlderThan30Days();
@@ -1036,7 +1030,11 @@
           filas: req.filas || [],
           enviado: new Date().toISOString()
         };
-        store.set(`${CACHE.TAREO_PREFIX}live_${req.fecha}_${fundo}_${pin}`, { filas: req.filas || [], estado: "ENVIADO" });
+        store.set(`${CACHE.TAREO_PREFIX}live_${req.fecha}_${fundo}_${pin}`, {
+          filas: req.filas || [],
+          estado: "ENVIADO",
+          enviado: envioObj.enviado
+        });
         const rKey = `${CACHE.RESUMEN_PREFIX}live_${req.fecha}`;
         const cur = store.get(rKey, { data: [], borradores: [], asistencia: [], asistenciaBorradores: [] });
         cur.data = (cur.data || []).filter(x => !(x.fundo === fundo && String(x.pin || pin) === pin));
@@ -1276,7 +1274,7 @@
     }
 
     // =========================================================================
-    // PARSEO DE EXCEL (.xlsx / .xls / .csv), TAREO MASIVO Y DISTRIBUCIÓN COSECHA
+    // PARSEO DE EXCEL (.xlsx / .xls / .csv)
     // =========================================================================
     function normHeader(h) {
       return String(h || "")
@@ -1582,6 +1580,7 @@
       if (Array.isArray(uArr)) S.users = uArr;
     }
 
+    // Sincronización en segundo plano protegida: nunca pisa la pestaña ni lo que el usuario esté editando
     function syncMaestrosBackground(forceToast = false) {
       if (S.demo) {
         setSyncText(`Modo Demo (${S.P.size} pers.)`, true);
@@ -1590,11 +1589,14 @@
       }
       store.purgeOlderThan30Days();
       setSyncText("Sincronizando Drive...", false);
+      const pinSnapshot = S.pin;
+
       Promise.all([
         api({ accion: "getPersonal" }),
         api({ accion: "getLabores" }),
         api({ accion: "getConfig" })
       ]).then(([pRes, lRes, cfgRes]) => {
+        if (S.pin !== pinSnapshot) return;
         let updated = false;
 
         if (pRes && pRes.ok && typeof pRes.data === "string" && pRes.data.length > 0) {
@@ -1633,8 +1635,9 @@
         if (updated && S.pin) {
           const sub = document.querySelector(".user-sub");
           if (sub) sub.textContent = `${S.P.size} pers. · ${S.L.length} labores · 30d`;
-          if (S.tab === "tareo" && $("t-list")) pintarTarjetasTareo(S.estado === "ENVIADO" && !S.editandoEnviado);
-          if (S.tab === "historial") renderHistorial();
+          if (S.activeTab === "tareo" && $("t-list") && !S.editandoEnviado) {
+            pintarTarjetasTareo(S.estado === "ENVIADO");
+          }
         }
       });
     }
@@ -1660,16 +1663,10 @@
         S.rol = rol;
         S.nombre = nombre || (rol === "admin" ? "Maestro" : "Responsable");
         S.fundo = rol === "admin" ? MASTER_FUNDO : (fundo || "");
-        S.tab = S.rol === "admin" ? "resumen" : "tareo";
-        if (S.tab === "tareo") cargarTareoDesdeCache();
+        S.activeTab = S.rol === "admin" ? "resumen" : "tareo";
+        if (S.activeTab === "tareo") cargarTareoDesdeCache();
         renderShell();
-
         syncMaestrosBackground(false);
-        if (S.tab === "tareo") {
-          cargarTareo().then(() => {
-            if (S.tab === "tareo" && $("t-list")) renderTareo();
-          });
-        }
       };
 
       const entrar = async () => {
@@ -1750,7 +1747,7 @@
       store.purgeOlderThan30Days();
       const c = store.get(tareoCacheKey(), null);
       if (c && Array.isArray(c.filas) && c.filas.length) {
-        S.filas = c.filas;
+        S.filas = c.filas.map(x => ({ ...x }));
         S.estado = c.estado || "NUEVO";
       } else {
         S.filas = [{ dni: "", labor: "", horas: 8 }];
@@ -1759,11 +1756,19 @@
       S.editandoEnviado = false;
     }
 
-    async function cargarTareo() {
+    async function cargarTareo(token = S.renderToken) {
       const fechaSolicitada = S.fecha;
       const pinSolicitado = S.pin;
       const r = await api({ accion: "getTareo", fecha: fechaSolicitada });
-      if (S.pin !== pinSolicitado || S.fecha !== fechaSolicitada) return;
+      if (
+        S.renderToken !== token ||
+        S.activeTab !== "tareo" ||
+        S.pin !== pinSolicitado ||
+        S.fecha !== fechaSolicitada ||
+        S.editandoEnviado
+      ) {
+        return false;
+      }
       if (r && r.ok && r.data) {
         S.filas = (r.data.filas && r.data.filas.length) ? r.data.filas : [{ dni: "", labor: "", horas: 8 }];
         S.estado = r.data.estado || "NUEVO";
@@ -1773,14 +1778,16 @@
           estado: S.estado,
           enviado: r.data.enviado || ""
         });
+        return true;
       }
+      return false;
     }
 
     function cargarAsisDesdeCache() {
       store.purgeOlderThan30Days();
       const c = store.get(asisCacheKey(), null);
       if (c && Array.isArray(c.filas) && c.filas.length) {
-        S.asisFilas = c.filas;
+        S.asisFilas = c.filas.map(x => ({ ...x }));
         S.asisResponsable = c.responsable || S.nombre || S.fundo;
         S.asisEstado = c.estado || "NUEVO";
       } else {
@@ -1791,11 +1798,19 @@
       S.asisEditandoEnviado = false;
     }
 
-    async function cargarAsistencia() {
+    async function cargarAsistencia(token = S.renderToken) {
       const fechaSolicitada = S.fecha;
       const pinSolicitado = S.pin;
       const r = await api({ accion: "getAsistencia", fecha: fechaSolicitada });
-      if (S.pin !== pinSolicitado || S.fecha !== fechaSolicitada) return;
+      if (
+        S.renderToken !== token ||
+        S.activeTab !== "asistencia" ||
+        S.pin !== pinSolicitado ||
+        S.fecha !== fechaSolicitada ||
+        S.asisEditandoEnviado
+      ) {
+        return false;
+      }
       if (r && r.ok && r.data) {
         S.asisFilas = (r.data.filas && r.data.filas.length) ? r.data.filas : [crearFilaDistVacia(S.fundo)];
         S.asisResponsable = r.data.responsable || S.nombre || S.fundo;
@@ -1806,12 +1821,33 @@
           filas: S.asisFilas,
           estado: S.asisEstado
         });
+        return true;
       }
+      return false;
     }
 
     // =========================================================================
-    // SHELL PRINCIPAL (CON HISTORIAL 30D EN LUGAR DE CARPETAS)
+    // CONTENEDORES DOM AISLADOS POR PESTAÑA (CERO SUPERPOSICIONES)
     // =========================================================================
+    function activatePane(tabName) {
+      S.renderToken++;
+      S.activeTab = tabName;
+
+      document.querySelectorAll("[data-t]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.t === tabName);
+      });
+
+      document.querySelectorAll(".tab-pane").forEach(pane => {
+        const isTarget = pane.id === `pane-${tabName}`;
+        pane.classList.toggle("active-pane", isTarget);
+        if (!isTarget) {
+          pane.innerHTML = "";
+        }
+      });
+
+      return S.renderToken;
+    }
+
     function renderShell() {
       const adm = S.rol === "admin";
       const tituloPequeno = adm
@@ -1825,8 +1861,7 @@
             ["asistencia", "Asistencia"],
             ["historial", "Historial (30d)"],
             ["users", "Usuarios"],
-            ["datos", "Datos"],
-            ["bg", "Apariencia"]
+            ["datos", "Datos"]
           ]
         : [
             ["tareo", "Tareo"],
@@ -1848,10 +1883,10 @@
           </div>
 
           <div class="tabs">
-            ${tabs.map(t => `<button type="button" data-t="${t[0]}" class="${S.tab === t[0] ? "active" : ""}">${t[1]}</button>`).join("")}
+            ${tabs.map(t => `<button type="button" data-t="${t[0]}" class="${S.activeTab === t[0] ? "active" : ""}">${t[1]}</button>`).join("")}
           </div>
 
-          <div id="view"></div>
+          ${tabs.map(t => `<div id="pane-${t[0]}" class="tab-pane ${S.activeTab === t[0] ? "active-pane" : ""}"></div>`).join("")}
         </div>
       `;
 
@@ -1862,39 +1897,58 @@
       };
 
       document.querySelectorAll("[data-t]").forEach(b => {
-        b.onclick = async () => {
-          S.tab = b.dataset.t;
-          if (S.tab === "tareo") {
-            cargarTareoDesdeCache();
-            renderShell();
-            await cargarTareo();
-            if (S.tab === "tareo") renderTareo();
-            return;
-          }
-          if (S.tab === "asistencia") {
-            cargarAsisDesdeCache();
-            renderShell();
-            await cargarAsistencia();
-            if (S.tab === "asistencia") renderAsistencia();
-            return;
-          }
-          renderShell();
-        };
+        b.onclick = () => switchToTab(b.dataset.t);
       });
 
-      ({
-        tareo: renderTareo,
-        asistencia: renderAsistencia,
-        historial: renderHistorial,
-        resumen: renderResumen,
-        users: renderUsers,
-        datos: renderDatos,
-        bg: renderFondo
-      })[S.tab]();
+      switchToTab(S.activeTab);
+    }
+
+    async function switchToTab(tabName) {
+      const token = activatePane(tabName);
+
+      if (tabName === "tareo") {
+        cargarTareoDesdeCache();
+        renderTareo();
+        const ok = await cargarTareo(token);
+        if (ok && S.renderToken === token && S.activeTab === "tareo" && !S.editandoEnviado) {
+          renderTareo();
+        }
+        return;
+      }
+
+      if (tabName === "asistencia") {
+        cargarAsisDesdeCache();
+        renderAsistencia();
+        const ok = await cargarAsistencia(token);
+        if (ok && S.renderToken === token && S.activeTab === "asistencia" && !S.asisEditandoEnviado) {
+          renderAsistencia();
+        }
+        return;
+      }
+
+      if (tabName === "historial") {
+        renderHistorial(token);
+        return;
+      }
+
+      if (tabName === "resumen") {
+        renderResumen(token);
+        return;
+      }
+
+      if (tabName === "users") {
+        renderUsers(token);
+        return;
+      }
+
+      if (tabName === "datos") {
+        renderDatos();
+        return;
+      }
     }
 
     // =========================================================================
-    // BORRAR TAREO / ASISTENCIA ENVIADOS PARA VOLVER A MANDAR INMEDIATAMENTE
+    // BORRAR TAREO / ASISTENCIA ENVIADOS PARA VOLVER A SUBIR INMEDIATAMENTE
     // =========================================================================
     async function borrarTareoEnviadoAccion(fecha, fundo, targetPin = "") {
       const ok = await confirmar(
@@ -1966,6 +2020,9 @@
     // VISTA TAREO (MASIVO DIRECTO AL SELECTOR + BORRADOR + ENVÍO + EDITAR + BORRAR)
     // =========================================================================
     function renderTareo() {
+      const pane = $("pane-tareo");
+      if (!pane || S.activeTab !== "tareo") return;
+
       const esEnviado = S.estado === "ENVIADO";
       const soloLectura = esEnviado && !S.editandoEnviado;
 
@@ -1974,7 +2031,7 @@
       else if (esEnviado && !S.editandoEnviado) badge = `<span class="badge b-env">ENVIADO</span>`;
       else if (esEnviado && S.editandoEnviado) badge = `<span class="badge b-bor">EDITANDO</span>`;
 
-      $("view").innerHTML = `
+      pane.innerHTML = `
         <div class="card">
           <div class="row sp">
             <div class="row">
@@ -2032,21 +2089,25 @@
       `;
 
       $("f-tareo").onchange = async e => {
+        const token = ++S.renderToken;
         S.fecha = e.target.value;
         cargarTareoDesdeCache();
         renderTareo();
-        await cargarTareo();
-        renderTareo();
+        const ok = await cargarTareo(token);
+        if (ok && S.renderToken === token && S.activeTab === "tareo" && !S.editandoEnviado) {
+          renderTareo();
+        }
       };
 
       if (soloLectura) {
         $("btn-edit-sent").onclick = () => {
+          S.renderToken++;
           S.editandoEnviado = true;
           renderTareo();
         };
         $("btn-del-sent").onclick = async () => {
           const borrado = await borrarTareoEnviadoAccion(S.fecha, S.fundo, S.pin);
-          if (borrado) renderTareo();
+          if (borrado && S.activeTab === "tareo") renderTareo();
         };
       } else {
         const incorporarFilasMasivas = nuevas => {
@@ -2096,7 +2157,7 @@
         if ($("btn-del-sent-edit")) {
           $("btn-del-sent-edit").onclick = async () => {
             const borrado = await borrarTareoEnviadoAccion(S.fecha, S.fundo, S.pin);
-            if (borrado) renderTareo();
+            if (borrado && S.activeTab === "tareo") renderTareo();
           };
         }
 
@@ -2108,9 +2169,10 @@
         };
 
         if ($("btn-cancel-edit")) {
-          $("btn-cancel-edit").onclick = async () => {
+          $("btn-cancel-edit").onclick = () => {
+            S.renderToken++;
             S.editandoEnviado = false;
-            await cargarTareo();
+            cargarTareoDesdeCache();
             renderTareo();
           };
         }
@@ -2161,7 +2223,7 @@
 
           $("btn-env").disabled = true;
           const r = await api({ accion: "enviarTareo", fecha: S.fecha, filas });
-          $("btn-env").disabled = false;
+          if ($("btn-env")) $("btn-env").disabled = false;
           if (!r.ok) return toast(r.error);
 
           S.estado = "ENVIADO";
@@ -2172,7 +2234,7 @@
             enviado: new Date().toISOString()
           });
           toast(esEnviado ? "Tareo actualizado" : "¡Tareo enviado al Maestro!");
-          renderTareo();
+          if (S.activeTab === "tareo") renderTareo();
         };
       }
 
@@ -2185,6 +2247,8 @@
     }
 
     function pintarTarjetasTareo(soloLectura = false) {
+      if (!$("t-list") || S.activeTab !== "tareo") return;
+
       const seen = {};
       S.filas.forEach(x => {
         const k = keyDni(x.dni);
@@ -2238,7 +2302,7 @@
 
       const totPers = S.filas.filter(x => keyDni(x.dni)).length;
       const totHrs = S.filas.reduce((a, x) => a + (keyDni(x.dni) ? Number(x.horas) || 0 : 0), 0);
-      $("tot-tareo").textContent = `${totPers} pers. · ${totHrs} h`;
+      if ($("tot-tareo")) $("tot-tareo").textContent = `${totPers} pers. · ${totHrs} h`;
 
       if (soloLectura) return;
 
@@ -2301,7 +2365,7 @@
     }
 
     // =========================================================================
-    // HISTORIAL DE TAREOS DE LOS ÚLTIMOS 30 DÍAS (PARA VER A QUIÉNES TAREO CADA DÍA)
+    // HISTORIAL DE TAREOS DE LOS ÚLTIMOS 30 DÍAS
     // =========================================================================
     function obtenerHistorialLocal30Dias() {
       store.purgeOlderThan30Days();
@@ -2345,12 +2409,16 @@
       return items.sort((a, b) => b.fecha.localeCompare(a.fecha));
     }
 
-    function renderHistorial() {
+    function renderHistorial(token = S.renderToken) {
+      const pane = $("pane-historial");
+      if (!pane || S.activeTab !== "historial" || S.renderToken !== token) return;
+
       const pintarListaHistorial = items => {
+        if (S.activeTab !== "historial" || S.renderToken !== token) return;
         const totDias = items.length;
         const totPersAcum = items.reduce((a, d) => a + d.filas.length, 0);
 
-        $("view").innerHTML = `
+        pane.innerHTML = `
           <div class="card">
             <div class="row sp">
               <div>
@@ -2418,10 +2486,12 @@
           </div>
         `;
 
-        $("hist-rf").onclick = async () => {
-          toast("Sincronizando historial...");
-          await sincronizarHistorialDesdeDrive();
-        };
+        if ($("hist-rf")) {
+          $("hist-rf").onclick = async () => {
+            toast("Sincronizando historial...");
+            await sincronizarHistorialDesdeDrive();
+          };
+        }
       };
 
       const sincronizarHistorialDesdeDrive = async () => {
@@ -2429,9 +2499,10 @@
         pintarListaHistorial(iniciales);
 
         if (S.demo) return;
-
-        // Intentar traer historial desde Drive si el script tiene historialUsuario o sincronizar fecha activa
+        const pinSnap = S.pin;
         const rHist = await api({ accion: "historialUsuario" });
+        if (S.pin !== pinSnap || S.activeTab !== "historial" || S.renderToken !== token) return;
+
         if (rHist && rHist.ok && Array.isArray(rHist.data)) {
           const cutoff = getCutoffIso(RETENTION_DAYS);
           rHist.data.forEach(item => {
@@ -2445,8 +2516,17 @@
           });
           pintarListaHistorial(obtenerHistorialLocal30Dias());
         } else {
-          await cargarTareo();
-          pintarListaHistorial(obtenerHistorialLocal30Dias());
+          const fechaSnap = S.fecha;
+          const rToday = await api({ accion: "getTareo", fecha: fechaSnap });
+          if (S.pin !== pinSnap || S.activeTab !== "historial" || S.renderToken !== token) return;
+          if (rToday && rToday.ok && rToday.data && rToday.data.estado === "ENVIADO" && Array.isArray(rToday.data.filas) && rToday.data.filas.length) {
+            store.set(tareoCacheKey(fechaSnap, S.fundo, pinSnap), {
+              filas: rToday.data.filas,
+              estado: "ENVIADO",
+              enviado: rToday.data.enviado || ""
+            });
+            pintarListaHistorial(obtenerHistorialLocal30Dias());
+          }
         }
       };
 
@@ -2566,9 +2646,12 @@
     }
 
     // =========================================================================
-    // VISTA ASISTENCIA / DISTRIBUCIÓN COSECHA (MANUAL + MASIVO + EXPORTAR IMAGEN)
+    // VISTA ASISTENCIA / DISTRIBUCIÓN COSECHA
     // =========================================================================
     function renderAsistencia() {
+      const pane = $("pane-asistencia");
+      if (!pane || S.activeTab !== "asistencia") return;
+
       const esEnviado = S.asisEstado === "ENVIADO";
       const soloLectura = esEnviado && !S.asisEditandoEnviado;
 
@@ -2577,7 +2660,7 @@
       else if (esEnviado && !S.asisEditandoEnviado) badge = `<span class="badge b-env">ENVIADO</span>`;
       else if (esEnviado && S.asisEditandoEnviado) badge = `<span class="badge b-bor">EDITANDO</span>`;
 
-      $("view").innerHTML = `
+      pane.innerHTML = `
         <div class="card">
           <div class="row sp" style="margin-bottom:6px">
             <div class="row">
@@ -2606,7 +2689,6 @@
         `}
 
         <div id="asis-list"></div>
-
         <div class="card" id="asis-totales-card"></div>
 
         <div class="card">
@@ -2633,17 +2715,18 @@
       `;
 
       $("f-asis").onchange = async e => {
+        const token = ++S.renderToken;
         S.fecha = e.target.value;
         cargarAsisDesdeCache();
         renderAsistencia();
-        await cargarAsistencia();
-        renderAsistencia();
+        const ok = await cargarAsistencia(token);
+        if (ok && S.renderToken === token && S.activeTab === "asistencia" && !S.asisEditandoEnviado) {
+          renderAsistencia();
+        }
       };
 
       if ($("asis-resp")) {
-        $("asis-resp").oninput = e => {
-          S.asisResponsable = e.target.value;
-        };
+        $("asis-resp").oninput = e => { S.asisResponsable = e.target.value; };
       }
 
       $("btn-img-asis").onclick = () => {
@@ -2653,11 +2736,12 @@
 
       if (soloLectura) {
         $("btn-asis-edit").onclick = () => {
+          S.renderToken++;
           S.asisEditandoEnviado = true;
           renderAsistencia();
         };
         $("btn-asis-del").onclick = async () => {
-          if (await borrarAsisEnviadoAccion(S.fecha, S.fundo, S.pin)) renderAsistencia();
+          if (await borrarAsisEnviadoAccion(S.fecha, S.fundo, S.pin) && S.activeTab === "asistencia") renderAsistencia();
         };
       } else {
         if ($("asis-masivo-file")) {
@@ -2681,7 +2765,7 @@
 
         if ($("btn-asis-del-edit")) {
           $("btn-asis-del-edit").onclick = async () => {
-            if (await borrarAsisEnviadoAccion(S.fecha, S.fundo, S.pin)) renderAsistencia();
+            if (await borrarAsisEnviadoAccion(S.fecha, S.fundo, S.pin) && S.activeTab === "asistencia") renderAsistencia();
           };
         }
 
@@ -2691,9 +2775,10 @@
         };
 
         if ($("btn-asis-cancel")) {
-          $("btn-asis-cancel").onclick = async () => {
+          $("btn-asis-cancel").onclick = () => {
+            S.renderToken++;
             S.asisEditandoEnviado = false;
-            await cargarAsistencia();
+            cargarAsisDesdeCache();
             renderAsistencia();
           };
         }
@@ -2744,14 +2829,14 @@
 
           $("btn-asis-env").disabled = true;
           const r = await api({ accion: "enviarAsistencia", fecha: S.fecha, responsable: resp, filas: filasLimpias });
-          $("btn-asis-env").disabled = false;
+          if ($("btn-asis-env")) $("btn-asis-env").disabled = false;
           if (!r.ok) return toast(r.error);
 
           S.asisEstado = "ENVIADO";
           S.asisEditandoEnviado = false;
           store.set(asisCacheKey(), { responsable: resp, filas: S.asisFilas, estado: "ENVIADO" });
           toast(esEnviado ? "Asistencia actualizada" : "¡Asistencia enviada al Maestro!");
-          renderAsistencia();
+          if (S.activeTab === "asistencia") renderAsistencia();
         };
       }
 
@@ -2759,6 +2844,7 @@
     }
 
     function actualizarTotalesAsistencia() {
+      if (!$("asis-totales-card") || S.activeTab !== "asistencia") return;
       const colTot = {};
       DIST_FIELDS.forEach(df => { colTot[df.key] = 0; });
       let grand = 0;
@@ -2783,6 +2869,7 @@
     }
 
     function pintarFilasAsistencia(soloLectura = false) {
+      if (!$("asis-list") || S.activeTab !== "asistencia") return;
       const dis = soloLectura ? "disabled" : "";
       $("asis-list").innerHTML = S.asisFilas.map((f, i) => `
         <div class="dist-card">
@@ -2838,9 +2925,12 @@
     }
 
     // =========================================================================
-    // VISTA MAESTRO: RESUMEN (TAREOS + ASISTENCIA CON COLUMNA FUNDO + EXPORTAR)
+    // VISTA MAESTRO: RESUMEN (TAREOS + ASISTENCIA CON FUNDO + EXCEL + IMAGEN)
     // =========================================================================
-    function renderResumen() {
+    function renderResumen(token = S.renderToken) {
+      const pane = $("pane-resumen");
+      if (!pane || S.activeTab !== "resumen" || S.renderToken !== token) return;
+
       const cacheKey = `${CACHE.RESUMEN_PREFIX}${S.demo ? "demo" : "live"}_${S.fecha}`;
       const cached = store.get(cacheKey, null);
       if (cached) {
@@ -2850,7 +2940,7 @@
         S.asisBorradoresList = cached.asistenciaBorradores || [];
       }
 
-      $("view").innerHTML = `
+      pane.innerHTML = `
         <div class="card">
           <div class="row sp" style="margin-bottom:6px">
             <div class="row">
@@ -2871,6 +2961,8 @@
       `;
 
       const pintarResumen = () => {
+        if (!$("rs") || S.activeTab !== "resumen" || S.renderToken !== token) return;
+
         if (S.resumenSubTab === "asistencia") {
           const list = S.asisResumen || [];
           const totFilas = list.reduce((a, x) => a + (x.filas || []).length, 0);
@@ -3034,12 +3126,12 @@
           S.asisResumen = c.asistencia || [];
           S.asisBorradoresList = c.asistenciaBorradores || [];
           pintarResumen();
-        } else if (showSpinnerIfEmpty) {
+        } else if (showSpinnerIfEmpty && $("rs")) {
           $("rs").innerHTML = `<div class="card m">Cargando resumen...</div>`;
         }
 
         const r = await api({ accion: "resumen", fecha: S.fecha });
-        if (S.fecha !== fechaSel) return;
+        if (S.fecha !== fechaSel || S.activeTab !== "resumen" || S.renderToken !== token) return;
         if (r && r.ok) {
           S.resumen = r.data || [];
           S.borradores = r.borradores || [];
@@ -3116,8 +3208,11 @@
     // =========================================================================
     // VISTA MAESTRO: CREAR USUARIOS POR FUNDO
     // =========================================================================
-    async function renderUsers() {
-      $("view").innerHTML = `
+    async function renderUsers(token = S.renderToken) {
+      const pane = $("pane-users");
+      if (!pane || S.activeTab !== "users" || S.renderToken !== token) return;
+
+      pane.innerHTML = `
         <div class="card">
           <div style="font-weight:800;margin-bottom:6px">Crear usuario por fundo</div>
           <div style="display:flex;flex-direction:column;gap:6px">
@@ -3136,6 +3231,7 @@
       `;
 
       const pintarUsuarios = () => {
+        if (!$("u-list") || S.activeTab !== "users" || S.renderToken !== token) return;
         $("u-list").innerHTML = S.users.length
           ? S.users.map(u => `
               <div class="row sp" style="padding:7px 0;border-bottom:1px solid var(--border)">
@@ -3165,6 +3261,7 @@
       const listar = async () => {
         if (S.users.length) pintarUsuarios();
         const r = await api({ accion: "listarUsuarios" });
+        if (S.activeTab !== "users" || S.renderToken !== token) return;
         if (r && r.ok && Array.isArray(r.data)) {
           S.users = r.data;
           store.set(CACHE.USERS, S.users);
@@ -3202,13 +3299,16 @@
     }
 
     // =========================================================================
-    // VISTA MAESTRO: CARGA MASIVA PERSONAL + TABLA DE LABORES CON ORDEN (↑ / ↓)
+    // VISTA MAESTRO: DATOS (EXCEL PERSONAL + LABORES CON ORDEN + FONDO)
     // =========================================================================
     function renderDatos() {
+      const pane = $("pane-datos");
+      if (!pane || S.activeTab !== "datos") return;
+
       let editLabores = S.L.map(l => ({ labor: l.labor, codigo: l.codigo }));
       if (!editLabores.length) editLabores = [{ labor: "", codigo: "" }];
 
-      $("view").innerHTML = `
+      pane.innerHTML = `
         <div class="card">
           <div style="font-weight:800;margin-bottom:4px">Carga masiva de personal (Excel)</div>
           <p class="m" style="margin:0 0 8px">
@@ -3253,9 +3353,21 @@
           </div>
           <button id="ls" type="button" class="btn" style="width:100%;margin-top:8px">Guardar labores y orden</button>
         </div>
+
+        <div class="card">
+          <div style="font-weight:800;margin-bottom:4px">Imagen de fondo (Apariencia)</div>
+          <p class="m" style="margin:0 0 8px">Se optimiza para móvil y se guarda en Drive.</p>
+          <input type="file" id="bg-file" accept="image/*" style="margin-bottom:6px" />
+          <div class="row" style="flex-wrap:nowrap;margin-bottom:6px">
+            <input id="bg-url" placeholder="O pega URL https://..." value="${S.bgImage && !S.bgImage.startsWith("data:") ? esc(S.bgImage) : ""}" style="flex:1" />
+            <button id="bg-apply" type="button" class="btn btn-xs">Aplicar</button>
+          </div>
+          <button id="bg-clear" type="button" class="btn btn-s btn-xs" style="width:100%">Quitar fondo</button>
+        </div>
       `;
 
       const pintarTablaLabores = () => {
+        if (!$("l-tbody") || S.activeTab !== "datos") return;
         const total = editLabores.length;
         $("l-tbody").innerHTML = editLabores.map((item, idx) => `
           <tr>
@@ -3296,15 +3408,11 @@
         });
 
         document.querySelectorAll("[data-ln]").forEach(inp => {
-          inp.oninput = () => {
-            editLabores[Number(inp.dataset.ln)].labor = inp.value;
-          };
+          inp.oninput = () => { editLabores[Number(inp.dataset.ln)].labor = inp.value; };
         });
 
         document.querySelectorAll("[data-lc]").forEach(inp => {
-          inp.oninput = () => {
-            editLabores[Number(inp.dataset.lc)].codigo = inp.value;
-          };
+          inp.oninput = () => { editLabores[Number(inp.dataset.lc)].codigo = inp.value; };
         });
 
         document.querySelectorAll("[data-lx]").forEach(btn => {
@@ -3343,7 +3451,7 @@
 
         $("ls").disabled = true;
         const r = await api({ accion: "cargarLabores", labores: limpias });
-        $("ls").disabled = false;
+        if ($("ls")) $("ls").disabled = false;
         if (!r.ok) return toast(r.error);
 
         S.L = limpias;
@@ -3375,15 +3483,17 @@
         const compactLines = parsePersonalTsv(rawTsv);
         if (!compactLines.length) return toast("No se detectaron trabajadores con DNI válido");
         const compactTxt = compactLines.join("\n");
-        $("fs").textContent = `Subiendo ${compactLines.length} trabajadores a Drive...`;
+        if ($("fs")) $("fs").textContent = `Subiendo ${compactLines.length} trabajadores a Drive...`;
         const r = await api({ accion: "cargarPersonal", tsv: rawTsv });
         if (!r.ok) {
-          $("fs").textContent = "";
+          if ($("fs")) $("fs").textContent = "";
           return toast(r.error);
         }
         store.setRaw(CACHE.PERSONAL, compactTxt);
         loadPersonalIntoMemory(compactTxt);
-        $("fs").textContent = `✓ ${r.total} trabajadores cargados en Drive (${Math.max(1, Math.round(compactTxt.length / 1024))} KB)`;
+        if ($("fs")) {
+          $("fs").textContent = `✓ ${r.total} trabajadores cargados en Drive (${Math.max(1, Math.round(compactTxt.length / 1024))} KB)`;
+        }
         toast(`Personal actualizado (${r.total} trabajadores)`);
         const sub = document.querySelector(".user-sub");
         if (sub) sub.textContent = `${S.P.size} pers. · ${S.L.length} labores · 30d`;
@@ -3393,16 +3503,16 @@
         const f = e.target.files[0];
         if (!f) return;
         try {
-          $("fs").textContent = `Leyendo ${f.name}...`;
+          if ($("fs")) $("fs").textContent = `Leyendo ${f.name}...`;
           const matriz = await leerArchivoComoMatriz(f);
           const tsv = matrizPersonalATsv(matriz);
           if (!tsv) {
-            $("fs").textContent = "";
+            if ($("fs")) $("fs").textContent = "";
             return toast("No se encontraron columnas válidas de DNI y nombres");
           }
           await subirTsvAlServidor(tsv);
         } catch (err) {
-          $("fs").textContent = "";
+          if ($("fs")) $("fs").textContent = "";
           toast(err.message || "Error leyendo el archivo Excel");
         }
         e.target.value = "";
@@ -3413,24 +3523,6 @@
         if (!txt) return toast("Pega la tabla primero");
         await subirTsvAlServidor(txt);
       };
-    }
-
-    // =========================================================================
-    // VISTA MAESTRO: APARIENCIA (FONDO PERSONALIZADO)
-    // =========================================================================
-    function renderFondo() {
-      $("view").innerHTML = `
-        <div class="card">
-          <div style="font-weight:800;margin-bottom:4px">Imagen de fondo (solo Maestro)</div>
-          <p class="m" style="margin:0 0 10px">Se optimiza para móvil y se guarda en Drive.</p>
-          <input type="file" id="bg-file" accept="image/*" style="margin-bottom:8px" />
-          <div class="row" style="flex-wrap:nowrap;margin-bottom:8px">
-            <input id="bg-url" placeholder="O pega URL https://..." value="${S.bgImage && !S.bgImage.startsWith("data:") ? esc(S.bgImage) : ""}" style="flex:1" />
-            <button id="bg-apply" type="button" class="btn">Aplicar</button>
-          </div>
-          <button id="bg-clear" type="button" class="btn btn-s" style="width:100%">Quitar fondo</button>
-        </div>
-      `;
 
       const saveBg = async val => {
         applyBg(val);
@@ -3457,7 +3549,7 @@
     }
 
     // =========================================================================
-    // INICIALIZACIÓN
+    // ARRANQUE INMEDIATO
     // =========================================================================
     store.purgeOlderThan30Days();
     applyBg(store.getRaw(CACHE.BG, ""));
