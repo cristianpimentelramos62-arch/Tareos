@@ -182,7 +182,7 @@
     .folder-item { border: 1px solid var(--brd); background: var(--sub); border-radius: 10px; padding: 9px 10px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .folder-item.cur { border-color: var(--pri); background: rgba(16,185,129,.08); }
     #toast { position: fixed; left: 12px; right: 12px; bottom: calc(16px + env(safe-area-inset-bottom)); max-width: 400px; margin: 0 auto; padding: 9px 12px; border-radius: 10px; background: var(--card2); border: 1px solid var(--pri); color: var(--txt); font-size: 12px; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,.3); display: none; z-index: 85; text-align: center; }
-    #img-scroll { overflow: auto; border-radius: 10px; border: 1px solid var(--brd); background: #0f172a; margin: 8px 0 10px; max-height: 66dvh; }
+    #img-scroll { overflow: auto; border-radius: 10px; border: 1px solid #cbd5e1; background: #ffffff; margin: 8px 0 10px; max-height: 66dvh; }
     #img-scroll img { display: block; width: 100%; min-width: 620px; height: auto; }
   </style>
 </head>
@@ -246,7 +246,7 @@
       <div id="img-scroll"><img id="im-prev" alt="Reporte" /></div>
       <div class="row" style="justify-content:flex-end">
         <button id="im-close" type="button" class="btn btn-s">Cerrar</button>
-        <button id="im-dl" type="button" class="btn">Descargar PNG</button>
+        <button id="im-dl" type="button" class="btn">Compartir</button>
       </div>
     </div>
   </div>
@@ -402,6 +402,18 @@
       });
     }
 
+    // Conversión de DataURL del Canvas a objeto File PNG para compartir nativamente
+    function dataUrlToFile(dataUrl, filename) {
+      const parts = String(dataUrl || "").split(",");
+      const mime = (parts[0].match(/:(.*?);/) || [])[1] || "image/png";
+      const bin = atob(parts[1] || "");
+      const len = bin.length;
+      const u8 = new Uint8Array(len);
+      for (let i = 0; i < len; i++) u8[i] = bin.charCodeAt(i);
+      return new File([u8], filename, { type: mime });
+    }
+
+    // Modal de vista previa con botón 'Compartir' directo (sin descarga previa) y respaldo automático
     function abrirModalImagen(titulo, sub, dataUrl, filename) {
       $("im-title").textContent = titulo;
       $("im-sub").textContent = sub;
@@ -410,7 +422,30 @@
       const cerrar = () => { $("img-modal").style.display = "none"; $("im-dl").onclick = null; $("im-close").onclick = null; $("im-x").onclick = null; };
       $("im-close").onclick = cerrar;
       $("im-x").onclick = cerrar;
-      $("im-dl").onclick = () => { const a = document.createElement("a"); a.download = filename; a.href = dataUrl; a.click(); toast("Imagen PNG descargada"); };
+      $("im-dl").onclick = async () => {
+        try {
+          const file = dataUrlToFile(dataUrl, filename);
+          if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
+            await navigator.share({
+              title: titulo,
+              text: titulo,
+              files: [file]
+            });
+            toast("Compartido con éxito");
+            return;
+          }
+        } catch (err) {
+          if (err && err.name === "AbortError") {
+            toast("Compartir cancelado");
+            return;
+          }
+        }
+        const a = document.createElement("a");
+        a.download = filename;
+        a.href = dataUrl;
+        a.click();
+        toast("Dispositivo sin compartir directo; PNG descargado");
+      };
     }
 
     function applyTheme(t) {
@@ -2317,6 +2352,7 @@
       XLSX.writeFile(wb, filename);
     }
 
+    // Exportación a imagen en versión clara lista para compartir directamente
     function repImagen(tipo, filasRaw, subFec) {
       const filas = (filasRaw || []).filter(r => !repVacia(r, tipo)).map(r => ({
         ...repNorm(r),
@@ -2338,18 +2374,28 @@
       const W = 40 + wCol.reduce((a, b) => a + b, 0), H = 132 + (filas.length + 1) * 30;
       const cv = document.createElement("canvas"); cv.width = W * 2; cv.height = H * 2;
       const ctx = cv.getContext("2d"); ctx.scale(2, 2);
-      ctx.fillStyle = "#0f172a"; ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = "#10b981"; ctx.fillRect(20, 18, W - 40, 32);
-      ctx.fillStyle = "#042f2e"; ctx.font = "800 13px sans-serif";
+
+      // Fondo blanco claro
+      ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, W, H);
+
+      // Banner esmeralda suave
+      ctx.fillStyle = "#ecfdf5"; ctx.fillRect(20, 18, W - 40, 32);
+      ctx.strokeStyle = "#a7f3d0"; ctx.lineWidth = 1; ctx.strokeRect(20, 18, W - 40, 32);
+      ctx.fillStyle = "#065f46"; ctx.font = "800 13px sans-serif";
       ctx.fillText(`${APP_NAME} · ${REP_CFG[tipo].titulo.toUpperCase()} · ${subFec}`, 30, 38);
-      ctx.fillStyle = "#94a3b8"; ctx.font = "700 11px sans-serif";
+
+      // Resumen KPI en gris oscuro
+      ctx.fillStyle = "#475569"; ctx.font = "700 11px sans-serif";
       ctx.fillText(`Ha: ${ha.toFixed(2)} | Kilos: ${fmtKilos(ki)} | Jornales: ${jo} | Kg/Jornal: ${jo > 0 ? fmtKgJor(ki / jo) : "0.0"}`, 20, 66);
-      ctx.fillStyle = "#1e293b"; ctx.fillRect(20, 78, W - 40, 32);
-      let x = 20; ctx.font = "700 9.5px sans-serif"; ctx.fillStyle = "#10b981";
+
+      // Cabecera de tabla clara
+      ctx.fillStyle = "#e2e8f0"; ctx.fillRect(20, 78, W - 40, 32);
+      let x = 20; ctx.font = "700 9.5px sans-serif"; ctx.fillStyle = "#047857";
       cols.forEach((c, i) => {
         ctx.fillText(getRepLbl(tipo, c).slice(0, 14), x + 4, 98);
         x += wCol[i];
       });
+
       const rows = [
         ...filas.map(r => cols.map(c => {
           const v = repVal(c, r, tipo);
@@ -2359,14 +2405,19 @@
         })),
         cols.map(c => c === "semana" ? "TOTAL" : c === "ha" ? ha.toFixed(2) : c === "kilos" ? fmtKilos(ki) : (c === "jornales" || c === "jrsTotales") ? String(jo) : c === "kgJor" ? (jo > 0 ? fmtKgJor(ki / jo) : "0.0") : "")
       ];
+
       rows.forEach((r, ri) => {
         const y = 110 + ri * 30, tot = ri === rows.length - 1;
-        ctx.fillStyle = tot ? "#064e3b" : (ri % 2 ? "#1e293b" : "#162032");
+        ctx.fillStyle = tot ? "#d1fae5" : (ri % 2 ? "#f8fafc" : "#ffffff");
         ctx.fillRect(20, y, W - 40, 30);
-        let cx = 20; ctx.fillStyle = tot ? "#ecfdf5" : "#f8fafc"; ctx.font = tot ? "700 10.5px sans-serif" : "500 10px sans-serif";
+        ctx.strokeStyle = tot ? "#6ee7b7" : "#e2e8f0";
+        ctx.lineWidth = 0.8;
+        ctx.strokeRect(20, y, W - 40, 30);
+        let cx = 20; ctx.fillStyle = tot ? "#064e3b" : "#0f172a"; ctx.font = tot ? "700 10.5px sans-serif" : "500 10px sans-serif";
         r.forEach((v, ci) => { ctx.fillText(String(v).slice(0, 17), cx + 4, y + 19); cx += wCol[ci]; });
       });
-      abrirModalImagen(`Vista previa · ${REP_CFG[tipo].titulo}`, "Columnas completas y totales", cv.toDataURL("image/png"), `${REP_CFG[tipo].titulo}_${subFec.replace(/\//g, "-")}.png`);
+
+      abrirModalImagen(`Vista previa · ${REP_CFG[tipo].titulo}`, "Versión clara lista para compartir", cv.toDataURL("image/png"), `${REP_CFG[tipo].titulo}_${subFec.replace(/\//g, "-")}.png`);
     }
 
     function renderRepIngreso(tipo) {
